@@ -2,11 +2,12 @@ import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from 'react'
 
 type Variant = 'primary' | 'secondary'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'size'> {
   children: ReactNode
   fullWidth?: boolean
   showTrailingIcon?: boolean
   variant?: Variant
+  size?: 'sm' | 'md'
 }
 
 export function Button({
@@ -14,11 +15,12 @@ export function Button({
   fullWidth,
   showTrailingIcon,
   variant = 'primary',
+  size = 'md',
   style,
   ...props
 }: ButtonProps) {
   const base: CSSProperties = {
-    padding: '10px 14px',
+    padding: size === 'sm' ? '6px 10px' : '10px 14px',
     borderRadius: 8,
     border: '1px solid transparent',
     cursor: 'pointer',
