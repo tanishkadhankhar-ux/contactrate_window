@@ -18,7 +18,7 @@ const RadioGroupContext = React.createContext<{ value?: string; onValueChange: (
 export function RadioGroup({ value, onValueChange, children }: RadioGroupProps) {
   return (
     <RadioGroupContext.Provider value={{ value, onValueChange }}>
-      <div style={{ display: 'grid', gap: 10 }}>{children}</div>
+      <div className='grid gap-2.5'>{children}</div>
     </RadioGroupContext.Provider>
   )
 }
@@ -31,15 +31,9 @@ export function RadioListItem({ value, children, letter }: RadioListItemProps) {
     <button
       type='button'
       onClick={() => context?.onValueChange(value)}
-      style={{
-        textAlign: 'left',
-        borderRadius: 10,
-        border: checked ? '1px solid #007ac8' : '1px solid #cbd5e1',
-        background: checked ? '#ecf1ff' : '#fff',
-        padding: '10px 12px',
-      }}
+      className={`radio-card text-left ${checked ? 'border-primary-700 bg-primary-300' : ''}`}
     >
-      {letter ? <span style={{ marginRight: 8, color: '#64748b' }}>{letter}</span> : null}
+      {letter ? <span className='mr-2 text-neutral-500'>{letter}</span> : null}
       {children}
     </button>
   )

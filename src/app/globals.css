@@ -18,3 +18,7 @@ body {
 a {
   color: inherit;
 }
+
+.has-sticky-button {
+  padding-bottom: 6rem;
+}

@@ -17,6 +17,7 @@ export function Button({
   variant = 'primary',
   size = 'md',
   style,
+  className,
   ...props
 }: ButtonProps) {
   const base: CSSProperties = {
@@ -33,7 +34,11 @@ export function Button({
       : { background: '#007ac8', color: '#fff' }
 
   return (
-    <button {...props} style={{ ...base, ...themed, ...style }}>
+    <button
+      {...props}
+      className={className}
+      style={{ ...base, ...themed, ...style, opacity: props.disabled ? 0.6 : 1 }}
+    >
       {children}
       {showTrailingIcon ? ' ->' : ''}
     </button>
