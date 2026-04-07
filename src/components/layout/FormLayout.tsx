@@ -38,6 +38,14 @@ export function FormLayout({ children, currentStep, onBack }: FormLayoutProps) {
       </div>
 
       <div className='max-w-content mx-auto px-4 sm:px-6 py-7 sm:py-8'>{children}</div>
+
+      <div className='border-t border-neutral-200 bg-neutral-100'>
+        <div className='max-w-content mx-auto px-4 sm:px-6 py-3 text-body-sm text-neutral-500 flex flex-wrap items-center justify-between gap-2'>
+          <span>Excellent Trustpilot</span>
+          <span>Soft credit pull to start</span>
+          <span>No obligation</span>
+        </div>
+      </div>
     </main>
   )
 }

@@ -35,14 +35,16 @@ export function Button({
       ? { background: '#fff', borderColor: '#EDEDED', color: '#333333' }
       : { background: '#007AC8', borderColor: '#007AC8', color: '#fff' }
 
+  const variantClass = variant === 'primary' ? 'btn-continue' : ''
+
   return (
     <button
       {...props}
-      className={className}
+      className={`${variantClass} ${className ?? ''}`.trim()}
       style={{ ...base, ...themed, ...style, opacity: props.disabled ? 0.6 : 1 }}
     >
       {children}
-      {showTrailingIcon ? ' ->' : ''}
+      {showTrailingIcon ? <span className='btn-arrow'> {'->'}</span> : ''}
     </button>
   )
 }
