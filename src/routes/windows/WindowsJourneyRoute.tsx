@@ -11,7 +11,7 @@ import {
   Step7_Complete,
 } from '@/components/screens/windows'
 import { trackWindowsEvent } from '@/lib/analytics/windowsEvents'
-import { getWindowsVariant } from '@/lib/experiments/windowsVariants'
+import { getWindowsVariant, getWindowsVariantConfig } from '@/lib/experiments/windowsVariants'
 import { classifyIntent } from '@/lib/windowsIntent'
 import { useWindowsJourneyState } from './useWindowsJourneyState'
 
@@ -37,6 +37,7 @@ const ORDER: Step[] = [
 export function WindowsJourneyRoute() {
   const [step, setStep] = React.useState<Step>('step1_project_type')
   const variant = React.useMemo(() => getWindowsVariant('windows-route-v1'), [])
+  const variantConfig = React.useMemo(() => getWindowsVariantConfig(variant), [variant])
   const { data, update, addEngagement } = useWindowsJourneyState()
 
   const next = () => {
@@ -99,11 +100,12 @@ export function WindowsJourneyRoute() {
       <Step4_Intent
         timeline={data.timeline}
         budget={data.budget}
+        decisionStage={data.decisionStage}
         onBack={back}
-        onNext={({ timeline, budget }) => {
+        onNext={({ timeline, budget, decisionStage }) => {
           const intentRoute = classifyIntent(timeline, budget)
-          update({ timeline, budget, intentRoute })
-          trackWindowsEvent('windows_intent_classified', { timeline, budget, intentRoute })
+          update({ timeline, budget, decisionStage, intentRoute })
+          trackWindowsEvent('windows_intent_classified', { timeline, budget, decisionStage, intentRoute })
           next()
         }}
       />
@@ -114,12 +116,14 @@ export function WindowsJourneyRoute() {
     return (
       <Step5_Results
         intentRoute={data.intentRoute ?? 'low_intent'}
+          variant={variant}
+          ctaLabel={variantConfig.resultsCtaByIntent[data.intentRoute ?? 'low_intent']}
         budget={data.budget}
         onBack={back}
         onNext={next}
         onEngage={(points) => {
           addEngagement(points)
-          trackWindowsEvent('windows_results_engagement', { points, score: data.engagementScore + points })
+            trackWindowsEvent('windows_results_engagement', { points, score: data.engagementScore + points, variant, intent: data.intentRoute })
         }}
       />
     )
@@ -129,11 +133,13 @@ export function WindowsJourneyRoute() {
     return (
       <Step6_PreContact
         intentRoute={data.intentRoute ?? 'low_intent'}
+        variant={variant}
+        continueLabel={variantConfig.preContactContinueCta}
         value={data.contactPreference}
         onBack={back}
         onSubmit={(contactPreference) => {
           update({ contactPreference })
-          trackWindowsEvent('windows_precontact_submit', { contactPreference, intent: data.intentRoute })
+          trackWindowsEvent('windows_precontact_submit', { contactPreference, intent: data.intentRoute, variant })
           next()
         }}
       />
@@ -151,6 +157,7 @@ export function WindowsJourneyRoute() {
           zipCode: undefined,
           timeline: undefined,
           budget: undefined,
+          decisionStage: undefined,
           intentRoute: undefined,
           contactPreference: undefined,
           engagementScore: 0,
