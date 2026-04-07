@@ -21,17 +21,19 @@ export function Button({
   ...props
 }: ButtonProps) {
   const base: CSSProperties = {
-    padding: size === 'sm' ? '6px 10px' : '10px 14px',
+    padding: size === 'sm' ? '8px 12px' : '12px 16px',
     borderRadius: 8,
-    border: '1px solid transparent',
+    border: '1px solid',
     cursor: 'pointer',
     width: fullWidth ? '100%' : undefined,
+    fontWeight: 600,
+    minHeight: size === 'sm' ? 38 : 48,
   }
 
   const themed: CSSProperties =
     variant === 'secondary'
-      ? { background: '#fff', borderColor: '#cbd5e1', color: '#0f172a' }
-      : { background: '#007ac8', color: '#fff' }
+      ? { background: '#fff', borderColor: '#EDEDED', color: '#333333' }
+      : { background: '#007AC8', borderColor: '#007AC8', color: '#fff' }
 
   return (
     <button

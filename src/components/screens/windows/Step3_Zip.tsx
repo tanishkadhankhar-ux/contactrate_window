@@ -19,6 +19,7 @@ export function Step3_Zip({ value, onBack, onNext }: Props) {
     <FormLayout currentStep={3} onBack={onBack}>
       <div className='space-y-6 has-sticky-button'>
         <h1 className='font-display text-display sm:text-display-lg text-neutral-900'>Your ZIP code</h1>
+        <p className='text-body text-neutral-500 -mt-3'>We use your area to match you with available local contractors.</p>
         <Input
           label='ZIP code'
           placeholder='e.g. 10001'

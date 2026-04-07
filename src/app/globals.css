@@ -11,8 +11,8 @@ body {
   margin: 0;
   padding: 0;
   font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f8fafc;
-  color: #0f172a;
+  background: #ffffff;
+  color: #333333;
 }
 
 a {
@@ -21,4 +21,34 @@ a {
 
 .has-sticky-button {
   padding-bottom: 6rem;
+}
+
+.input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #ededed;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 16px;
+  color: #333333;
+  background: #ffffff;
+}
+
+.input:focus-visible {
+  outline: 2px solid #80caf4;
+  outline-offset: 1px;
+  border-color: #007ac8;
+}
+
+.radio-card {
+  width: 100%;
+  border: 1px solid #ededed;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 14px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.radio-card:hover {
+  border-color: #007ac8;
 }

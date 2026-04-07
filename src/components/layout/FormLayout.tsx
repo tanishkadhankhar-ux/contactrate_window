@@ -9,6 +9,11 @@ interface FormLayoutProps {
 export function FormLayout({ children, currentStep, onBack }: FormLayoutProps) {
   return (
     <main className='min-h-screen bg-white'>
+      <div className='border-b border-neutral-200 bg-white'>
+        <div className='max-w-content mx-auto px-4 sm:px-6 py-3 text-sm text-neutral-500'>
+          Forbes Advisor
+        </div>
+      </div>
       <div className='sticky top-0 z-30 bg-white border-b border-neutral-200'>
         <div className='max-w-content mx-auto px-4 sm:px-6 py-3 flex items-center gap-3'>
           {onBack ? (
@@ -32,7 +37,7 @@ export function FormLayout({ children, currentStep, onBack }: FormLayoutProps) {
         </div>
       </div>
 
-      <div className='max-w-content mx-auto px-4 sm:px-6 py-6'>{children}</div>
+      <div className='max-w-content mx-auto px-4 sm:px-6 py-7 sm:py-8'>{children}</div>
     </main>
   )
 }
