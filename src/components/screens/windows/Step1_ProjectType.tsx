@@ -14,8 +14,8 @@ interface Props {
 export function Step1_ProjectType({ value, onBack, onNext }: Props) {
   return (
     <FormLayout currentStep={1} onBack={onBack}>
-      <div className='space-y-6 has-sticky-button'>
-        <h1 className='font-display text-display sm:text-display-lg text-neutral-900'>Project type</h1>
+      <div className='space-y-7 has-sticky-button'>
+        <h1 className='font-display text-display sm:text-display-md lg:text-display-lg text-neutral-900'>Project type</h1>
         <p className='text-body text-neutral-500 -mt-3'>Choose the option that best describes your window project.</p>
         <RadioGroup value={value} onValueChange={(v) => onNext(v as ProjectType)}>
           {PROJECT_TYPE_OPTIONS.map((option, idx) => (

@@ -10,8 +10,9 @@ export function FormLayout({ children, currentStep, onBack }: FormLayoutProps) {
   return (
     <main className='min-h-screen bg-white'>
       <div className='border-b border-neutral-200 bg-white'>
-        <div className='max-w-content mx-auto px-4 sm:px-6 py-3 text-sm text-neutral-500'>
-          Forbes Advisor
+        <div className='max-w-content mx-auto px-4 sm:px-6 py-3 text-sm text-neutral-500 flex items-center justify-between gap-2'>
+          <span className='font-semibold text-neutral-900'>Forbes Advisor</span>
+          <span className='text-neutral-500'>Advertiser Disclosure</span>
         </div>
       </div>
       <div className='sticky top-0 z-30 bg-white border-b border-neutral-200'>

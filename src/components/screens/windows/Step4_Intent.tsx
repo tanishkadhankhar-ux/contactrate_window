@@ -38,7 +38,7 @@ export function Step4_Intent({ timeline, budget, decisionStage, onBack, onNext }
     <FormLayout currentStep={4} onBack={onBack}>
       <div className='space-y-7 has-sticky-button'>
         <div className='space-y-3'>
-          <h1 className='font-display text-display sm:text-display-lg text-neutral-900'>
+          <h1 className='font-display text-display sm:text-display-md lg:text-display-lg text-neutral-900'>
             When are you planning to start this project?
           </h1>
           <RadioGroup value={localTimeline} onValueChange={(v) => setLocalTimeline(v as TimelineOption)}>

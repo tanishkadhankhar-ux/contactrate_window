@@ -16,8 +16,8 @@ export function Step2_WindowsCount({ value, onBack, onNext }: Props) {
 
   return (
     <FormLayout currentStep={2} onBack={onBack}>
-      <div className='space-y-6 has-sticky-button'>
-        <h1 className='font-display text-display sm:text-display-lg text-neutral-900'>How many windows?</h1>
+      <div className='space-y-7 has-sticky-button'>
+        <h1 className='font-display text-display sm:text-display-md lg:text-display-lg text-neutral-900'>How many windows?</h1>
         <p className='text-body text-neutral-500 -mt-3'>A quick count helps us show better-fit providers and pricing.</p>
         <Input
           label='Number of windows'

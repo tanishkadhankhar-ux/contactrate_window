@@ -38,9 +38,9 @@ export function Step6_PreContact({ intentRoute, variant, value, onBack, onSubmit
 
   return (
     <FormLayout currentStep={6} onBack={onBack}>
-      <div className='space-y-6 has-sticky-button'>
-        <h1 className='font-display text-display sm:text-display-lg text-neutral-900'>Here&apos;s what happens next</h1>
-        <div className='rounded-lg border border-neutral-200 bg-neutral-50 p-4 space-y-2'>
+      <div className='space-y-7 has-sticky-button'>
+        <h1 className='font-display text-display sm:text-display-md lg:text-display-lg text-neutral-900'>Here&apos;s what happens next</h1>
+        <div className='rounded-lg border border-neutral-200 bg-neutral-50 p-4 space-y-2 shadow-card'>
           <p className='text-sm text-neutral-800'><strong>Who:</strong> A Forbes Advisor verified partner</p>
           <p className='text-sm text-neutral-800'><strong>When:</strong> {whenLine}</p>
           <p className='text-sm text-neutral-800'><strong>Why:</strong> To review options, not a sales call</p>

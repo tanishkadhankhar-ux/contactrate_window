@@ -10,6 +10,7 @@ const config: Config = {
       },
       fontSize: {
         display: ['1.75rem', { lineHeight: '2.25rem', fontWeight: '600' }],
+        'display-md': ['2.25rem', { lineHeight: '2.75rem', fontWeight: '600' }],
         'display-lg': ['2rem', { lineHeight: '2.5rem', fontWeight: '600' }],
         body: ['1rem', { lineHeight: '1.5rem', fontWeight: '400' }],
         'body-sm': ['0.875rem', { lineHeight: '1.35rem', fontWeight: '400' }],
@@ -31,6 +32,18 @@ const config: Config = {
           800: '#333333',
           900: '#000000',
         },
+      },
+      maxWidth: {
+        content: '640px',
+      },
+      boxShadow: {
+        card: '0 2px 8px rgba(0,0,0,0.08)',
+      },
+      borderRadius: {
+        lg: '12px',
+      },
+      spacing: {
+        7: '1.75rem',
       },
     },
   },
