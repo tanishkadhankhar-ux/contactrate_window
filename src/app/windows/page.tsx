@@ -1,5 +1,5 @@
 'use client'
 
-import WindowsJourneyRoute from '@/routes/windows'
+import WindowsJourneyV2Route from '@/routes/windows-v2'
 
-export default WindowsJourneyRoute
+export default WindowsJourneyV2Route

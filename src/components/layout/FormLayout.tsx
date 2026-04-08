@@ -4,41 +4,47 @@ interface FormLayoutProps {
   children: ReactNode
   currentStep?: number
   onBack?: () => void
+  totalSteps?: number
 }
 
-export function FormLayout({ children, currentStep, onBack }: FormLayoutProps) {
+export function FormLayout({ children, currentStep, onBack, totalSteps = 7 }: FormLayoutProps) {
+  const progressPct = Math.max(0, Math.min(100, Math.round(((currentStep ?? 1) / totalSteps) * 100)))
+
   return (
-    <main className='min-h-screen bg-white'>
+    <main className='min-h-screen bg-white flex flex-col'>
       <div className='border-b border-neutral-200 bg-white'>
         <div className='max-w-content mx-auto px-4 sm:px-6 py-3 text-sm text-neutral-500 flex items-center justify-between gap-2'>
-          <span className='font-semibold text-neutral-900'>Forbes Advisor</span>
+          <a href='/' className='font-semibold text-neutral-900'>
+            Forbes Advisor
+          </a>
           <span className='text-neutral-500'>Advertiser Disclosure</span>
         </div>
       </div>
-      <div className='sticky top-0 z-30 bg-white border-b border-neutral-200'>
-        <div className='max-w-content mx-auto px-4 sm:px-6 py-3 flex items-center gap-3'>
+
+      <div className='w-full sticky top-0 z-40 px-4 sm:px-6 py-3 bg-white'>
+        <div className='max-w-content mx-auto flex items-center gap-3'>
           {onBack ? (
             <button
               type='button'
               onClick={onBack}
-              className='w-9 h-9 rounded-full border border-neutral-200 text-neutral-800 hover:bg-neutral-100'
+              className='flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-neutral-100 text-neutral-900 hover:bg-neutral-200'
             >
-              {'<'}
+              <svg width='20' height='20' viewBox='0 0 20 20' fill='none'>
+                <path d='M12 4L6 10L12 16' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round' strokeLinejoin='round' />
+              </svg>
             </button>
           ) : null}
-          <div className='text-body-sm text-neutral-500'>
-            {currentStep ? `Step ${currentStep} of 7` : 'Journey'}
+
+          <div className='flex-1 h-[6px] rounded-full overflow-hidden bg-neutral-200'>
+            <div
+              className='h-full rounded-full transition-[width] duration-700 ease-out bg-neutral-800'
+              style={{ width: `${progressPct}%` }}
+            />
           </div>
-        </div>
-        <div className='h-1 bg-neutral-100'>
-          <div
-            className='h-1 bg-primary-700 transition-all'
-            style={{ width: `${Math.min(100, ((currentStep ?? 1) / 7) * 100)}%` }}
-          />
         </div>
       </div>
 
-      <div className='max-w-content mx-auto px-4 sm:px-6 py-7 sm:py-8'>{children}</div>
+      <div className='max-w-content mx-auto w-full px-4 sm:px-6 py-7 sm:py-8 flex-1'>{children}</div>
 
       <div className='border-t border-neutral-200 bg-neutral-100'>
         <div className='max-w-content mx-auto px-4 sm:px-6 py-3 text-body-sm text-neutral-500 flex flex-wrap items-center justify-between gap-2'>

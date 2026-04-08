@@ -25,6 +25,10 @@ export function Button({
     borderRadius: 8,
     border: '1px solid',
     cursor: 'pointer',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     width: fullWidth ? '100%' : undefined,
     fontWeight: 600,
     minHeight: size === 'sm' ? 38 : 48,
@@ -44,7 +48,16 @@ export function Button({
       style={{ ...base, ...themed, ...style, opacity: props.disabled ? 0.6 : 1 }}
     >
       {children}
-      {showTrailingIcon ? <span className='btn-arrow'> {'->'}</span> : ''}
+      {showTrailingIcon ? (
+        <span className='btn-arrow' aria-hidden='true'>
+          <svg width='18' height='18' viewBox='0 0 20 20' fill='none'>
+            <path d='M4 10H16' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' />
+            <path d='M11 5L16 10L11 15' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round' />
+          </svg>
+        </span>
+      ) : (
+        ''
+      )}
     </button>
   )
 }
