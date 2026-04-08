@@ -52,7 +52,7 @@ export function Step7_Results({
           Recommended by Forbes Advisor
         </div>
         <h1 className='font-display text-display sm:text-display-md lg:text-display-lg text-neutral-900'>
-          Your matched providers are ready
+          {segment === 'VIP_URGENT' && vipCallTriggered ? 'Connecting you with a Pro now...' : 'Your matched providers are ready'}
         </h1>
 
         {segment === 'VIP_URGENT' && vipCallTriggered ? (

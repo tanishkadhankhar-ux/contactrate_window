@@ -2,6 +2,7 @@ import './globals.css'
 import type { ReactNode } from 'react'
 import { Work_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
+import { SiteHeader } from '@/components/layout/SiteHeader'
 
 const workSans = Work_Sans({
   subsets: ['latin'],
@@ -28,7 +29,10 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en' className={`${workSans.variable} ${schnyderS.variable}`}>
-      <body className='font-sans'>{children}</body>
+      <body className='font-sans'>
+        <SiteHeader />
+        {children}
+      </body>
     </html>
   )
 }

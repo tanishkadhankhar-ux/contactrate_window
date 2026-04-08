@@ -4,15 +4,15 @@ import type { Budget, IntentRoute, Timeline, WindowSegment, WindowsV2JourneyStat
 export function getInterstitialDurationMs(segment: WindowSegment): number {
   switch (segment) {
     case 'VIP_URGENT':
-      return 2000
+      return 10000
     case 'SENSITIVE':
-      return 2600
+      return 10500
     case 'PLANNED':
-      return 3200
+      return 11000
     case 'CURIOUS':
-      return 4200
+      return 12000
     default:
-      return 3200
+      return 11000
   }
 }
 

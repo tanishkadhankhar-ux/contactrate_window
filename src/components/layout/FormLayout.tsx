@@ -12,16 +12,7 @@ export function FormLayout({ children, currentStep, onBack, totalSteps = 7 }: Fo
 
   return (
     <main className='min-h-screen bg-white flex flex-col'>
-      <div className='border-b border-neutral-200 bg-white'>
-        <div className='max-w-content mx-auto px-4 sm:px-6 py-3 text-sm text-neutral-500 flex items-center justify-between gap-2'>
-          <a href='/' className='font-semibold text-neutral-900'>
-            Forbes Advisor
-          </a>
-          <span className='text-neutral-500'>Advertiser Disclosure</span>
-        </div>
-      </div>
-
-      <div className='w-full sticky top-0 z-40 px-4 sm:px-6 py-3 bg-white'>
+      <div className='w-full sticky top-14 z-40 px-4 sm:px-6 py-3 bg-white'>
         <div className='max-w-content mx-auto flex items-center gap-3'>
           {onBack ? (
             <button

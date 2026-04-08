@@ -1,8 +1,9 @@
 'use client'
 
 import { FormLayout } from '@/components/layout/FormLayout'
-import { Button, StickyButtonContainer } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { Input } from '@/components/ui/Input'
+import Image from 'next/image'
 
 interface Props {
   zipCode: string
@@ -44,14 +45,22 @@ export function Step0_Landing({ zipCode, canContinue, onBack, onNext, onZipChang
         </div>
 
         <div className='rounded-xl border border-neutral-200 bg-white p-5 sm:p-6'>
-          <div className='flex flex-wrap gap-2 mb-4'>
-            <span className='rounded-full bg-primary-300 text-primary-700 text-xs font-semibold px-3 py-1'>Forbes Advisor</span>
+          <div className='flex flex-wrap items-center gap-3 mb-4'>
+            <Image
+              src='/forbes-advisor-logo.png'
+              alt='Forbes Advisor'
+              width={156}
+              height={28}
+              className='h-6 w-auto'
+            />
             <span className='rounded-full bg-neutral-100 text-neutral-800 text-xs font-semibold px-3 py-1'>Verified contractors</span>
           </div>
           <div className='grid grid-cols-1 sm:grid-cols-3 gap-3'>
             <div className='rounded-lg bg-neutral-50 border border-neutral-200 p-4'>
               <p className='text-body-sm text-neutral-500'>Average project cost</p>
-              <p className='text-headline-md text-primary-700 font-semibold mt-1'>$10,000-$20,000*</p>
+              <p className='mt-1 text-[20px] leading-tight font-semibold text-primary-700 text-balance break-words sm:text-headline-md'>
+                $10,000–$20,000*
+              </p>
             </div>
             <div className='rounded-lg bg-neutral-50 border border-neutral-200 p-4'>
               <p className='text-body-sm text-neutral-500'>Homeowners matched</p>
@@ -73,11 +82,6 @@ export function Step0_Landing({ zipCode, canContinue, onBack, onNext, onZipChang
           <span>Book with confidence</span>
         </div>
 
-        <StickyButtonContainer>
-          <Button fullWidth showTrailingIcon disabled={!canContinue} onClick={onNext}>
-            Find contractors near me
-          </Button>
-        </StickyButtonContainer>
       </div>
     </FormLayout>
   )

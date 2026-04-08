@@ -8,13 +8,11 @@ export type IntentRoute = 'high_intent' | 'mid_intent' | 'low_intent'
 export type WindowSegment = 'VIP_URGENT' | 'SENSITIVE' | 'PLANNED' | 'CURIOUS'
 export type ContactPreference =
   | 'call_now'
-  | 'schedule_30'
   | 'schedule_1h'
+  | 'schedule_48h'
   | 'schedule_weekend'
-  | 'text_me'
-  | 'email_options'
-  | 'text_updates'
-  | 'call_later'
+  | 'email_guide'
+  | 'sms_from_contractor'
 
 export type WindowsV2Step = 0 | 1 | 2 | 3 | 'interstitial' | 4 | 5 | 6 | 7
 

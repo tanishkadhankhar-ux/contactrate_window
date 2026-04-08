@@ -56,6 +56,10 @@ export function Step6_UserDetails({ state, segment, canContinue, onBack, onNext,
     setVipSecondsLeft(30)
   }
 
+  const addVipTime = () => {
+    setVipSecondsLeft((s) => (s === null ? null : s + 15))
+  }
+
   const showPhone = !isCurious
   const piiReady = canContinue
   const vipWaiting = isVip && vipSecondsLeft !== null && vipSecondsLeft > 0
@@ -93,9 +97,22 @@ export function Step6_UserDetails({ state, segment, canContinue, onBack, onNext,
               Click to receive your priority quote call.
             </Button>
             {vipWaiting ? (
-              <p className='text-sm font-semibold text-primary-700 text-center'>
-                Priority call window: {vipSecondsLeft}s
-              </p>
+              <div className='space-y-2'>
+                <div className='flex items-center justify-center gap-2'>
+                  <span className='inline-flex h-2 w-2 rounded-full bg-feedback-success animate-pulse' aria-hidden />
+                  <p className='text-sm font-semibold text-primary-700 text-center'>Get ready for call</p>
+                </div>
+                <div className='flex items-center justify-center gap-3'>
+                  <p className='text-sm font-semibold text-primary-700'>Timer: {vipSecondsLeft}s</p>
+                  <button
+                    type='button'
+                    onClick={addVipTime}
+                    className='text-sm font-semibold text-primary-700 underline underline-offset-2 hover:text-primary-800'
+                  >
+                    Give me more time
+                  </button>
+                </div>
+              </div>
             ) : null}
           </div>
         ) : null}

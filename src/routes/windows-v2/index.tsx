@@ -30,6 +30,7 @@ export default function WindowsJourneyV2Route() {
   const [state, setState] = React.useState<WindowsV2JourneyState>(initialWindowsV2State)
   const variant = React.useMemo(() => getWindowsVariant('windows-v2-route'), [])
   const variantConfig = React.useMemo(() => getWindowsVariantConfig(variant), [variant])
+  const submitTrackedRef = React.useRef(false)
 
   const update = (patch: Partial<WindowsV2JourneyState>) => setState((prev) => ({ ...prev, ...patch }))
   const next = () => {
@@ -61,6 +62,7 @@ export default function WindowsJourneyV2Route() {
   const restart = () => {
     setState(initialWindowsV2State)
     setStep(0)
+    submitTrackedRef.current = false
   }
 
   React.useEffect(() => {
@@ -71,6 +73,20 @@ export default function WindowsJourneyV2Route() {
       segment: state.windowSegment,
     })
   }, [step, variant, state.intentRoute, state.windowSegment])
+
+  React.useEffect(() => {
+    if (step !== 7) return
+    if (submitTrackedRef.current) return
+    submitTrackedRef.current = true
+    trackWindowsEvent('windows_v2_pii_submit', {
+      variant,
+      intent: state.intentRoute,
+      segment: state.windowSegment,
+      contact_preference: state.contactPreference,
+      text_updates_opt_in: state.textUpdatesOptIn,
+      zip: state.zipCode.replace(/\D/g, '').slice(0, 5),
+    })
+  }, [step, variant, state.intentRoute, state.windowSegment, state.contactPreference, state.textUpdatesOptIn, state.zipCode])
 
   React.useEffect(() => {
     if (step === 5 && state.windowSegment === 'VIP_URGENT') {
@@ -104,7 +120,7 @@ export default function WindowsJourneyV2Route() {
           window.location.href = '/'
         }}
         onNext={next}
-        onZipChange={(zipCode) => update({ zipCode })}
+        onZipChange={(zipCode) => update({ zipCode: zipCode.replace(/\D/g, '').slice(0, 5) })}
       />
     )
   }
