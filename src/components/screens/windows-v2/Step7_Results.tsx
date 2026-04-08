@@ -3,24 +3,47 @@
 import * as React from 'react'
 import { FormLayout } from '@/components/layout/FormLayout'
 import { Button, StickyButtonContainer } from '@/components/ui'
-import type { IntentRoute } from './types'
+import type { IntentRoute, WindowSegment } from './types'
 
 interface Props {
+  segment: WindowSegment
   intentRoute: IntentRoute
   primaryCta: string
+  zipDisplay: string
+  vipCallTriggered?: boolean
   onBack: () => void
   onRestart: () => void
 }
 
-export function Step7_Results({ intentRoute, primaryCta, onBack, onRestart }: Props) {
-  const [secondsLeft, setSecondsLeft] = React.useState(30)
+const VERIFICATION_LINES = (zip: string) =>
+  [
+    'Verified Local Licenses',
+    'Insurance & Bonded Status',
+    `Recent 5-Star Reviews in ${zip}`,
+  ] as const
+
+export function Step7_Results({
+  segment,
+  intentRoute,
+  primaryCta,
+  zipDisplay,
+  vipCallTriggered,
+  onBack,
+  onRestart,
+}: Props) {
+  const [visibleCards, setVisibleCards] = React.useState(0)
 
   React.useEffect(() => {
-    if (intentRoute !== 'high_intent') return
-    if (secondsLeft <= 0) return
-    const timer = window.setTimeout(() => setSecondsLeft((s) => s - 1), 1000)
-    return () => window.clearTimeout(timer)
-  }, [intentRoute, secondsLeft])
+    setVisibleCards(0)
+    const ids = [
+      window.setTimeout(() => setVisibleCards(1), 500),
+      window.setTimeout(() => setVisibleCards(2), 1000),
+      window.setTimeout(() => setVisibleCards(3), 1500),
+    ]
+    return () => ids.forEach((id) => clearTimeout(id))
+  }, [zipDisplay])
+
+  const lines = VERIFICATION_LINES(zipDisplay || 'your area')
 
   return (
     <FormLayout currentStep={8} totalSteps={8} onBack={onBack}>
@@ -28,18 +51,30 @@ export function Step7_Results({ intentRoute, primaryCta, onBack, onRestart }: Pr
         <div className='rounded-lg border border-primary-700 bg-primary-300 px-4 py-3 text-primary-700 font-semibold'>
           Recommended by Forbes Advisor
         </div>
-        <h1 className='font-display text-display sm:text-display-md lg:text-display-lg text-neutral-900'>Your matched providers are ready</h1>
+        <h1 className='font-display text-display sm:text-display-md lg:text-display-lg text-neutral-900'>
+          Your matched providers are ready
+        </h1>
 
-        {intentRoute === 'high_intent' ? (
-          <div className='rounded-lg border border-primary-700 bg-primary-300 p-4 space-y-2'>
+        {segment === 'VIP_URGENT' && vipCallTriggered ? (
+          <div className='rounded-lg border border-primary-700 bg-primary-300 p-4'>
             <p className='text-sm text-primary-700 font-semibold'>
-              Keep your phone ready. A Forbes Advisor contractor will call you in: {secondsLeft} seconds
+              Your priority quote call is queued. Keep your phone nearby—an advisor may reach out shortly.
             </p>
-            <button type='button' className='text-sm underline text-primary-700'>
-              Give me more time
-            </button>
           </div>
         ) : null}
+
+        <div className='space-y-3'>
+          <p className='text-body-sm font-semibold text-neutral-900'>Live match verification</p>
+          {lines.slice(0, visibleCards).map((label, i) => (
+            <div
+              key={label}
+              className='animate-fade-in rounded-lg border border-neutral-200 bg-white p-4 shadow-card flex items-center justify-between gap-3'
+            >
+              <span className='text-sm text-neutral-800'>{label}</span>
+              <span className='text-feedback-success font-semibold text-sm shrink-0'>✓</span>
+            </div>
+          ))}
+        </div>
 
         <div className='rounded-lg border border-neutral-200 p-4 bg-white shadow-card'>
           {intentRoute === 'high_intent' ? (

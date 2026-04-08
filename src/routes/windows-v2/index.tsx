@@ -15,11 +15,15 @@ import {
 import { initialWindowsV2State, type WindowsV2JourneyState, type WindowsV2Step } from '@/components/screens/windows-v2/types'
 import {
   canProceedStepOne,
-  canProceedStepSeven,
-  classifyIntent,
+  canProceedPii,
+  classifyWindowSegment,
+  getInterstitialDurationMs,
+  mapSegmentToIntent,
 } from '@/components/screens/windows-v2/utils'
 import { getWindowsVariant, getWindowsVariantConfig } from '@/lib/experiments/windowsVariants'
 import { trackWindowsEvent } from '@/lib/analytics/windowsEvents'
+
+const STEP_ORDER: WindowsV2Step[] = [0, 1, 2, 3, 4, 'interstitial', 5, 6, 7]
 
 export default function WindowsJourneyV2Route() {
   const [step, setStep] = React.useState<WindowsV2Step>(0)
@@ -29,38 +33,72 @@ export default function WindowsJourneyV2Route() {
 
   const update = (patch: Partial<WindowsV2JourneyState>) => setState((prev) => ({ ...prev, ...patch }))
   const next = () => {
-    const order: WindowsV2Step[] = [0, 1, 2, 3, 'interstitial', 4, 5, 6, 7]
-    const idx = order.indexOf(step)
-    if (idx >= 0 && idx < order.length - 1) setStep(order[idx + 1])
+    const idx = STEP_ORDER.indexOf(step)
+    if (idx >= 0 && idx < STEP_ORDER.length - 1) setStep(STEP_ORDER[idx + 1])
   }
+
   const back = () => {
-    if (step === 6 && state.intentRoute === 'high_intent') {
+    if (step === 6) {
+      if (state.windowSegment === 'VIP_URGENT') {
+        setStep(4)
+        return
+      }
+      setStep(5)
+      return
+    }
+    if (step === 5) {
       setStep(4)
       return
     }
-    const order: WindowsV2Step[] = [0, 1, 2, 3, 'interstitial', 4, 5, 6, 7]
-    const idx = order.indexOf(step)
-    if (idx > 0) setStep(order[idx - 1])
+    if (step === 'interstitial') {
+      setStep(4)
+      return
+    }
+    const idx = STEP_ORDER.indexOf(step)
+    if (idx > 0) setStep(STEP_ORDER[idx - 1])
   }
+
   const restart = () => {
     setState(initialWindowsV2State)
     setStep(0)
   }
 
   React.useEffect(() => {
-    trackWindowsEvent('windows_v2_step_view', { step, variant, intent: state.intentRoute })
-  }, [step, variant, state.intentRoute])
+    trackWindowsEvent('windows_v2_step_view', {
+      step,
+      variant,
+      intent: state.intentRoute,
+      segment: state.windowSegment,
+    })
+  }, [step, variant, state.intentRoute, state.windowSegment])
+
+  React.useEffect(() => {
+    if (step === 5 && state.windowSegment === 'VIP_URGENT') {
+      setStep(6)
+    }
+  }, [step, state.windowSegment])
 
   React.useEffect(() => {
     if (step !== 'interstitial') return
-    const timer = window.setTimeout(() => setStep(4), 1400)
-    return () => window.clearTimeout(timer)
-  }, [step])
+    const segment = state.windowSegment
+    if (!segment) {
+      setStep(4)
+      return
+    }
+    const duration = getInterstitialDurationMs(segment)
+    const timer = window.setTimeout(() => {
+      if (segment === 'VIP_URGENT') setStep(6)
+      else setStep(5)
+    }, duration)
+    return () => clearTimeout(timer)
+  }, [step, state.windowSegment])
+
+  const zipDisplay = state.zipCode.replace(/\D/g, '').slice(0, 5)
 
   if (step === 0) {
     return (
       <Step0_Landing
-        zipCode={state.zipCode.replace(/\D/g, '').slice(0, 5)}
+        zipCode={zipDisplay}
         canContinue={canProceedStepOne(state)}
         onBack={() => {
           window.location.href = '/'
@@ -104,14 +142,10 @@ export default function WindowsJourneyV2Route() {
         onBack={back}
         onSelect={(timeline) => {
           update({ timeline })
-          window.setTimeout(() => setStep('interstitial'), 180)
+          window.setTimeout(() => next(), 180)
         }}
       />
     )
-  }
-
-  if (step === 'interstitial') {
-    return <InterstitialMatching onBack={back} />
   }
 
   if (step === 4) {
@@ -120,27 +154,28 @@ export default function WindowsJourneyV2Route() {
         value={state.budget}
         onBack={back}
         onSelect={(budget) => {
-          update({ budget })
-          const intentRoute = classifyIntent(state.timeline, budget)
-          update({ intentRoute })
-          window.setTimeout(() => {
-            if (intentRoute === 'high_intent') {
-              setStep(6)
-              return
-            }
-            next()
-          }, 180)
+          const windowSegment = classifyWindowSegment(state.timeline, budget)
+          const intentRoute = mapSegmentToIntent(windowSegment)
+          update({ budget, windowSegment, intentRoute })
+          window.setTimeout(() => setStep('interstitial'), 180)
         }}
       />
     )
   }
 
-  if (step === 5) {
-    const route = state.intentRoute ?? 'low_intent'
+  if (step === 'interstitial') {
+    const segment = state.windowSegment ?? 'PLANNED'
+    return <InterstitialMatching segment={segment} onBack={back} />
+  }
 
+  if (step === 5) {
+    const segment = state.windowSegment ?? 'PLANNED'
+    if (segment === 'VIP_URGENT') {
+      return null
+    }
     return (
       <Step5_PreContact
-        intentRoute={route}
+        segment={segment}
         value={state.contactPreference}
         textUpdatesOptIn={state.textUpdatesOptIn}
         onBack={back}
@@ -154,11 +189,12 @@ export default function WindowsJourneyV2Route() {
   }
 
   if (step === 6) {
+    const segment = state.windowSegment ?? 'PLANNED'
     return (
       <Step6_UserDetails
         state={state}
-        intentRoute={state.intentRoute ?? 'low_intent'}
-        canContinue={canProceedStepSeven(state)}
+        segment={segment}
+        canContinue={canProceedPii(state)}
         onBack={back}
         onNext={next}
         onUpdate={update}
@@ -166,8 +202,19 @@ export default function WindowsJourneyV2Route() {
     )
   }
 
-  const route = state.intentRoute ?? 'low_intent'
-  const resultsPrimaryCta = variantConfig.resultsCtaByIntent[route]
+  const segment = state.windowSegment ?? 'PLANNED'
+  const intentRoute = state.intentRoute ?? mapSegmentToIntent(segment)
+  const resultsPrimaryCta = variantConfig.resultsCtaByIntent[intentRoute]
 
-  return <Step7_Results intentRoute={route} primaryCta={resultsPrimaryCta} onBack={back} onRestart={restart} />
+  return (
+    <Step7_Results
+      segment={segment}
+      intentRoute={intentRoute}
+      primaryCta={resultsPrimaryCta}
+      zipDisplay={zipDisplay || 'your area'}
+      vipCallTriggered={state.vipCallTriggered}
+      onBack={back}
+      onRestart={restart}
+    />
+  )
 }

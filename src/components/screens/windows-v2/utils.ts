@@ -1,4 +1,20 @@
-import type { Budget, IntentRoute, Timeline, WindowsV2JourneyState } from './types'
+import type { Budget, IntentRoute, Timeline, WindowSegment, WindowsV2JourneyState } from './types'
+
+/** Interstitial duration (ms) — VIP fastest, CURIOUS slowest (labor perception + segment fit). */
+export function getInterstitialDurationMs(segment: WindowSegment): number {
+  switch (segment) {
+    case 'VIP_URGENT':
+      return 2000
+    case 'SENSITIVE':
+      return 2600
+    case 'PLANNED':
+      return 3200
+    case 'CURIOUS':
+      return 4200
+    default:
+      return 3200
+  }
+}
 
 export function formatPhone(value: string) {
   const numbers = value.replace(/\D/g, '').slice(0, 10)
@@ -39,15 +55,45 @@ export function canProceedStepSix(state: WindowsV2JourneyState) {
 }
 
 export function canProceedStepSeven(state: WindowsV2JourneyState) {
+  return canProceedPii(state)
+}
+
+/** PII validation: CURIOUS is email-led (phone optional); others require phone. */
+export function canProceedPii(state: WindowsV2JourneyState) {
   const emailValid = /\S+@\S+\.\S+/.test(state.email)
+  const nameOk = Boolean(state.firstName.trim()) && Boolean(state.lastName.trim())
+  if (!nameOk || !emailValid) return false
+  if (state.windowSegment === 'CURIOUS') return true
   const digits = state.phone.replace(/\D/g, '')
-  return Boolean(state.firstName.trim()) && Boolean(state.lastName.trim()) && emailValid && digits.length === 10
+  return digits.length === 10
 }
 
 export function classifyIntent(timeline?: Timeline, budget?: Budget): IntentRoute {
-  if (timeline === 'immediately' && budget && budget !== 'not_sure') return 'high_intent'
-  if (timeline === 'within_1_month' || timeline === 'one_to_three_months') return 'mid_intent'
-  return 'low_intent'
+  return mapSegmentToIntent(classifyWindowSegment(timeline, budget))
+}
+
+/**
+ * Propensity-adjusted segmentation (Timeline + Budget).
+ * VIP URGENT: Immediately + mid/high budget.
+ * SENSITIVE: Immediately + low / not sure.
+ * PLANNED: Within 1 month or 1–3 months.
+ * CURIOUS: Just exploring.
+ */
+export function classifyWindowSegment(timeline?: Timeline, budget?: Budget): WindowSegment {
+  if (timeline === 'just_exploring') return 'CURIOUS'
+  if (timeline === 'within_1_month' || timeline === 'one_to_three_months') return 'PLANNED'
+  if (timeline === 'immediately') {
+    const midHigh = budget === '2k_to_5k' || budget === '5k_to_10k'
+    if (midHigh) return 'VIP_URGENT'
+    return 'SENSITIVE'
+  }
+  return 'PLANNED'
+}
+
+export function mapSegmentToIntent(segment: WindowSegment): IntentRoute {
+  if (segment === 'VIP_URGENT') return 'high_intent'
+  if (segment === 'CURIOUS') return 'low_intent'
+  return 'mid_intent'
 }
 
 export function windowCountToNumber(value?: WindowsV2JourneyState['windowsCount']) {
